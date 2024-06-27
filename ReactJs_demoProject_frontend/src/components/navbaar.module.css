@@ -1,0 +1,64 @@
+/* navbaar.module.css */
+
+nav {
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    justify-content: center; /* Center the nav items */
+    align-items: center;
+    height: 60px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  nav ul li {
+    margin: 0 15px; /* Add some margin between the items */
+  }
+  
+  nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    background-color: #333; /* Button-like background color */
+    border-radius: 4px; /* Rounded corners for buttons */
+    transition: background-color 0.3s; /* Smooth transition for hover effects */
+  }
+  
+  nav ul li a:hover {
+    background-color: #494949; /* Darker green on hover */
+  }
+  
+  nav ul li a.active {
+    background-color: #2b2a2a; /* Active button color */
+    color: white;
+  }
+  
+  nav ul li a:focus {
+    background-color: #555;
+    color: white;
+    outline: none; /* Remove default outline */
+  }
+  
+  @media screen and (max-width: 600px) {
+    nav ul {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    nav ul li {
+      margin: 5px 0; /* Add margin between items for small screens */
+    }
+    
+    nav ul li a {
+      width: 100%; /* Make buttons full width on small screens */
+      text-align: center;
+    }
+  }
+  
