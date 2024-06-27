@@ -33,6 +33,7 @@ const Login: React.FC = () => {
       if (response.data.token.token) {
 
         const total = response.data;
+        console.log(total.token)
         dispatch(loginAction(total.token));
         setMessage("Login successful");
 

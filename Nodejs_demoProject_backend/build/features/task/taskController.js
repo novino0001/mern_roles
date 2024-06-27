@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31,13 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTaskByAdmin = exports.updateUserTask = exports.deleteUserTask = exports.getAllUserTask = exports.getUserTask = exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getTasks = exports.createTask = void 0;
-const taskService = __importStar(require("./taskService"));
+exports.createTaskByAdmin = exports.updateUserTask = exports.deleteUserTask = exports.getAllUserTask = exports.getUserTask = exports.getUpcomingTask = exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getTasks = exports.createTask = void 0;
+const taskService_1 = __importDefault(require("./taskService"));
 // Create a new task
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const task = yield taskService.createTask(req.body);
+        const task = yield taskService_1.default.createTask(req.body);
         res.status(201).json(task);
     }
     catch (error) {
@@ -52,7 +32,7 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(401).json({ message: 'Unauthorized' });
     }
     try {
-        const tasks = yield taskService.getTasks(userId);
+        const tasks = yield taskService_1.default.getTasks(userId);
         res.status(200).json(tasks);
     }
     catch (error) {
@@ -65,7 +45,7 @@ exports.getTasks = getTasks;
 const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const task = yield taskService.getTaskById(id);
+        const task = yield taskService_1.default.getTaskById(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -81,7 +61,7 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { id } = req.params;
     const updates = req.body;
     try {
-        const task = yield taskService.updateTask(id, updates);
+        const task = yield taskService_1.default.updateTask(id, updates);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -100,7 +80,7 @@ const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(401).json({ message: 'Unauthorized' });
     }
     try {
-        const task = yield taskService.deleteTask(id, userId);
+        const task = yield taskService_1.default.deleteTask(id, userId);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -111,11 +91,25 @@ const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteTask = deleteTask;
+const getUpcomingTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.body;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const tasks = yield taskService_1.default.getUpcomingTask(userId);
+        res.status(200).json(tasks);
+    }
+    catch (error) {
+        res.status(400).json("something went wrong");
+    }
+});
+exports.getUpcomingTask = getUpcomingTask;
 //Admin
 const getUserTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const tasks = yield taskService.particularUser(id);
+        const tasks = yield taskService_1.default.particularUser(id);
         res.status(200).json(tasks);
     }
     catch (error) {
@@ -126,7 +120,7 @@ exports.getUserTask = getUserTask;
 // Admin function to get all tasks (for all users)
 const getAllUserTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const tasks = yield taskService.getAllTasks();
+        const tasks = yield taskService_1.default.getAllTasks();
         res.status(200).json(tasks);
     }
     catch (error) {
@@ -138,7 +132,7 @@ exports.getAllUserTask = getAllUserTask;
 const deleteUserTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const task = yield taskService.adminDeleteTask(id);
+        const task = yield taskService_1.default.adminDeleteTask(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -154,7 +148,7 @@ const updateUserTask = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const { id } = req.params;
     const { title, description, dewDate, status } = req.body;
     try {
-        const task = yield taskService.adminUpdateTask(id, title, description, dewDate, status);
+        const task = yield taskService_1.default.adminUpdateTask(id, title, description, dewDate, status);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -169,7 +163,7 @@ const createTaskByAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const { id } = req.params;
         req.body.userId = id;
-        const task = yield taskService.createTaskByAdmin(req.body);
+        const task = yield taskService_1.default.createTaskByAdmin(req.body);
         res.status(201).json(task);
     }
     catch (error) {

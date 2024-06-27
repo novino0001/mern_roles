@@ -5,7 +5,8 @@ import User from "../../models/userModel";
 import mongoose from "mongoose";
 
 
-export const createTask = async (userTask: ITask) => {
+class TaskService {
+ async createTask(userTask: ITask){
     try {
         const task = new Task(userTask)
         await task.save()
@@ -29,7 +30,7 @@ export const createTask = async (userTask: ITask) => {
     }
 };
 
-export const getTasks = async (user_id: string) => {
+async getTasks(user_id: string){
     try {
         const result = await Task.aggregate([
             {
@@ -65,7 +66,7 @@ export const getTasks = async (user_id: string) => {
 
 
 
-export const getTaskById = async (id: string) => {
+  async getTaskById(id: string) {
     try {
         const getTask = await Task.findById({ _id: id });
         if (getTask) {
@@ -83,7 +84,7 @@ export const getTaskById = async (id: string) => {
     }
 }
 
-export const updateTask = async (id: string, updates: Partial<ITask>) => {
+ async updateTask(id: string, updates: Partial<ITask>) {
     try {
         const updated_task = await Task.findOneAndUpdate({ _id: id }, updates, { new: true });
         if (updated_task) {
@@ -100,7 +101,7 @@ export const updateTask = async (id: string, updates: Partial<ITask>) => {
     }
 }
 
-export const deleteTask = async (id: string, userId: string) => {
+ async deleteTask(id: string, userId: string)  {
     try {
         const deleted_task = await Task.findOneAndDelete({ _id: id, userId });
         if (deleted_task) {
@@ -116,9 +117,43 @@ export const deleteTask = async (id: string, userId: string) => {
     };
 }
 
+
+async getUpcomingTask(id : string){
+    
+        const now = new Date();
+        const oneWeekLater = new Date();
+        oneWeekLater.setDate(now.getDate() + 7);
+        try{
+            const upcomingTasks = await Task.find({
+                 userId : id,
+                dueDate: {
+                  $gte: now,
+                  $lte: oneWeekLater
+                },
+                status: "pending"
+              });
+              console.log("------------------",upcomingTasks)
+              if(upcomingTasks){
+                 response.data = {upcomingTasks}
+                 return response
+  
+            }
+            else{
+                response.message = "No upcoming task"
+                return response
+            }
+        }
+            catch (error) {
+                console.error("Error find upcoming  task:", error);
+                throw error;
+            };     
+       
+    
+}
+
 // Admin service
 
-export const particularUser = async (id: string) => {
+ async particularUser(id: string) {
     try {
         const result = await Task.aggregate([
             {
@@ -131,11 +166,14 @@ export const particularUser = async (id: string) => {
                 }
             }
         ]);
+        console.log("--------->",result)
 
         const getscore = result.reduce((acc, item) => {
             acc[item._id] = item.count;
             return acc;
         }, { pending: 0, completed: 0 });
+
+        console.log("________getscore______",getscore)
 
         const userTask = await Task.find({ userId: id });
         const response = {
@@ -152,8 +190,7 @@ export const particularUser = async (id: string) => {
     }
 };
 
-
-export const getAllTasks = async () => {
+ async getAllTasks() {
     try {
         const results = await Task.aggregate([
             {
@@ -177,8 +214,22 @@ export const getAllTasks = async () => {
                 },
             },
         ]);
+        const taskstatus = await Task.aggregate([
+             
+            {
+                $group: {
+                    _id: "$status",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+        const getscore = taskstatus.reduce((acc, item) => {
+            acc[item._id] = item.count;
+            return acc;
+        }, { pending: 0, completed: 0 });
+        
         if (results) {
-            response.data = { results }
+            response.data = { results,getscore }
             return response
         }
 
@@ -187,7 +238,7 @@ export const getAllTasks = async () => {
     }
 };
 
-export const adminDeleteTask = async (id: string) => {
+ async adminDeleteTask(id: string) {
     try {
         const deleted_task = await Task.findOneAndDelete({ _id: id });
         if (deleted_task) {
@@ -203,7 +254,7 @@ export const adminDeleteTask = async (id: string) => {
     };
 };
 
-export const adminUpdateTask = async (id: string, title: string, description: string, dewDate: Date, status: string) => {
+ async adminUpdateTask(id: string, title: string, description: string, dewDate: Date, status: string) {
     try {
         const updates = {
             title: title,
@@ -224,8 +275,9 @@ export const adminUpdateTask = async (id: string, title: string, description: st
         console.error("Error delete task:", error);
         throw error;
     }
-};
-export const createTaskByAdmin = async (userTask: ITask) => {
+}
+
+async createTaskByAdmin(userTask: ITask){
     try {
         const task = new Task(userTask)
         await task.save()
@@ -248,3 +300,6 @@ export const createTaskByAdmin = async (userTask: ITask) => {
         throw error;
     }
 };
+}
+ 
+export default new TaskService();

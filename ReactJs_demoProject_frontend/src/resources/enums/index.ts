@@ -1,8 +1,8 @@
 enum ActionType {
     LOGIN = "LOGIN",  
     LOGOUT = "LOGOUT",  
-
-    MY_TASKS = "MY_TASKS",
+ 
+    UPDATE_PROFILE = "UPDATE_PROFILE", 
  
   }
   

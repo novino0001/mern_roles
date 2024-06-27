@@ -42,17 +42,26 @@ class UserService {
                 updates.password = hashedPassword;
             }
             const updated_user = yield userModel_1.default.findByIdAndUpdate(userId, updates, { new: true });
+            console.log("-----------updated=========", updated_user);
             if (!updated_user) {
+                commonInterfaces_1.response.message = "User not found";
+                commonInterfaces_1.response.success = false;
+                return commonInterfaces_1.response;
+            }
+            else {
+                console.log("-----------updated=========", updated_user._id);
+                const updated_userinfo = {
+                    userId: updated_user._id,
+                    fullName: updated_user.fullName,
+                    email: updated_user.email,
+                    role: updated_user.role
+                };
                 return {
-                    message: "User not found",
-                    success: false,
+                    message: "User updated successfully",
+                    data: updated_userinfo,
+                    success: true,
                 };
             }
-            return {
-                message: "User updated successfully",
-                data: updated_user,
-                success: true,
-            };
         });
     }
     ;
@@ -75,8 +84,8 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const recent_users = yield userModel_1.default.find({ role: "user" })
-                    .sort({ createdAt: -1 }) // Sort by creation date in descending order
-                    .limit(3);
+                    .sort({ _id: -1 }) // Sort by creation date in descending order
+                    .limit(5);
                 if (recent_users) {
                     commonInterfaces_1.response.data = { recent_users };
                     return commonInterfaces_1.response;

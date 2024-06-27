@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTask, updateTask, deleteTask, getTasks, getTaskById ,getUserTask,getAllUserTask , deleteUserTask , updateUserTask, createTaskByAdmin} from './taskController';
+import { createTask, updateTask, deleteTask, getTasks, getTaskById ,getUserTask,getAllUserTask , deleteUserTask , updateUserTask, createTaskByAdmin, getUpcomingTask} from './taskController';
 import { authMiddleware } from "../../middlewares/authMiddleware"
 import { roleMiddleware } from "../../middlewares/roleMiddleware"
  
@@ -12,6 +12,7 @@ taskRoutes.get('/getAllTask', authMiddleware, getTasks);
 taskRoutes.get('/getTaskById/:id', authMiddleware, getTaskById);
 taskRoutes.patch('/updateTaskById/:id', authMiddleware, updateTask);
 taskRoutes.delete('/deleteTask/:id', authMiddleware, deleteTask);
+taskRoutes.get('/upcoming-task', authMiddleware,getUpcomingTask); 
 
 // Admin routes
 taskRoutes.get('/admin/user/:id', authMiddleware, roleMiddleware('admin'), getUserTask); 

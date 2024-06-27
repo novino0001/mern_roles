@@ -28,17 +28,27 @@ class UserService {
     }
    
     const updated_user = await User.findByIdAndUpdate(userId, updates, { new: true });
+    console.log("-----------updated=========",updated_user)
+  
     if (!updated_user) {
-      return {
-        message: "User not found",
-        success: false,
-      };
+      response.message = "User not found";
+      response.success = false;
+      return response; 
     }
+    else{
+      console.log("-----------updated=========",updated_user._id)
+    const updated_userinfo = {
+      userId : updated_user._id,
+      fullName: updated_user.fullName,
+      email: updated_user.email,
+      role : updated_user.role
+    };
     return {
       message: "User updated successfully",
-      data: updated_user,
+      data: updated_userinfo,
       success: true,
     }
+  }
   };
 
   async getAllUsers() {
@@ -59,8 +69,8 @@ class UserService {
   async  getLatestUsers() {
     try {
       const recent_users = await User.find({ role: "user" })
-        .sort({ createdAt: -1 }) // Sort by creation date in descending order
-        .limit(3);  
+        .sort({_id:-1}) // Sort by creation date in descending order
+        .limit(5);  
           
         if (recent_users) {
           response.data = { recent_users }

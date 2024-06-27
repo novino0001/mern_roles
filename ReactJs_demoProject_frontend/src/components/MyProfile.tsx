@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
             },
           }
         );
-        console.log(response.data.data)
+        // console.log(response.data.data)
         setUserData(response.data.data);
       } catch (err) {
         setError("Failed to fetch user data");

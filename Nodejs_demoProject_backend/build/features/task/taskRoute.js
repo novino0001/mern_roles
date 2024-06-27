@@ -13,6 +13,7 @@ taskRoutes.get('/getAllTask', authMiddleware_1.authMiddleware, taskController_1.
 taskRoutes.get('/getTaskById/:id', authMiddleware_1.authMiddleware, taskController_1.getTaskById);
 taskRoutes.patch('/updateTaskById/:id', authMiddleware_1.authMiddleware, taskController_1.updateTask);
 taskRoutes.delete('/deleteTask/:id', authMiddleware_1.authMiddleware, taskController_1.deleteTask);
+taskRoutes.get('/upcoming-task', authMiddleware_1.authMiddleware, taskController_1.getUpcomingTask);
 // Admin routes
 taskRoutes.get('/admin/user/:id', authMiddleware_1.authMiddleware, (0, roleMiddleware_1.roleMiddleware)('admin'), taskController_1.getUserTask);
 taskRoutes.get('/admin/alluser-task', authMiddleware_1.authMiddleware, (0, roleMiddleware_1.roleMiddleware)('admin'), taskController_1.getAllUserTask);

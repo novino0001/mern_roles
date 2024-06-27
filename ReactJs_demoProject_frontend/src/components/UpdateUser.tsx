@@ -3,11 +3,12 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch } from 'react-redux';
 import { IRootState } from '../state_management/reducers/AuthReducers';
 import "./components.css";
 import routes from '../constants/routes';
 import * as yup from 'yup';
+import { UpdateProfile } from '../state_management/actions/authActions';
 
 // Define Yup validation schema
 const schema = yup.object().shape({
@@ -21,24 +22,30 @@ const schema = yup.object().shape({
 
 const UpdateUser: React.FC = () => {
   const navigate = useNavigate();
-  const { token, email, fullName } = useSelector((state: IRootState) => state.userProfile);
-
+  const dispatch = useDispatch();
+  const { token, email, fullName  } = useSelector((state: IRootState) => state.userProfile); 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
   useEffect(() => {
+     
     setValue("fullName", fullName);
     setValue("email", email);
   }, [email, fullName, setValue]);
 
   const onSubmit = async (data: any) => {
     try {
-      await axios.patch(`http://localhost:3002/api/v1/user/update-profile`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const responce = await axios.patch(`http://localhost:3002/api/v1/user/update-profile`,data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const update_data = responce.data.data
+      update_data.token = token; 
+      dispatch(UpdateProfile(update_data)) 
       navigate(routes.MYPROFILE);
     } catch (error) {
       console.error('Error updating user data:', error);

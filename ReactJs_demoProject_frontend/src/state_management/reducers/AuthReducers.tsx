@@ -1,10 +1,18 @@
 import { UserData   } from '../../interfaces/CommonInterfaces';
 import ActionType from '../../resources/enums/index';
 
-
+// interface UserData {
+//     userId : string;
+//     fullName: string; 
+//     email: string; 
+//     token : string;
+//     role: string;
+   
+// }
 export interface IRootState {
     isLoggedIn: boolean,
     userProfile: UserData,
+    
   
 }
 
@@ -18,12 +26,16 @@ interface LoginAction {
     type: ActionType.LOGIN,
     payload: UserData 
 }
+interface UpdateAction {
+    type: ActionType.UPDATE_PROFILE,
+    payload: UserData 
+}
 
 interface LogoutAction {
     type: ActionType.LOGOUT
 }
  
-type Action = LoginAction | LogoutAction  ;
+type Action = LoginAction | LogoutAction | UpdateAction ;
 export const authReducer = (state = initialState, action: Action) => {
 
     switch (action.type) {
@@ -37,6 +49,12 @@ export const authReducer = (state = initialState, action: Action) => {
             return ({
                 isLoggedIn: false,
                 userProfile: {} as UserData,
+            })
+        case ActionType.UPDATE_PROFILE:
+            return ({
+                ...state, 
+                userProfile: action.payload,
+               
             })
     
         default:

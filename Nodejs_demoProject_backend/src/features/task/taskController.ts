@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import * as taskService from './taskService';
+import TaskService from './taskService';
 import { AuthRequest } from '../../middlewares/authMiddleware';
 
 
 // Create a new task
 export const createTask = async (req: AuthRequest, res: Response) => {
     try {
-        const task = await taskService.createTask(req.body);
+        const task = await TaskService.createTask(req.body);
         res.status(201).json(task);
     } catch (error) {
         res.status(400).json("something went wrong");
@@ -21,7 +21,7 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
     try {
-        const tasks = await taskService.getTasks(userId);
+        const tasks = await TaskService.getTasks(userId);
         res.status(200).json(tasks);
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -33,7 +33,7 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
 export const getTaskById = async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
-        const task = await taskService.getTaskById(id);
+        const task = await TaskService.getTaskById(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -49,7 +49,7 @@ export const updateTask = async (req: Request, res: Response) => {
     const updates = req.body;
 
     try {
-        const task = await taskService.updateTask(id, updates);
+        const task = await TaskService.updateTask(id, updates);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -68,7 +68,7 @@ export const deleteTask = async (req: Request, res: Response) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
     try {
-        const task = await taskService.deleteTask(id, userId);
+        const task = await TaskService.deleteTask(id, userId);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -78,13 +78,28 @@ export const deleteTask = async (req: Request, res: Response) => {
     }
 };
 
+export const getUpcomingTask = async (req: AuthRequest, res: Response) =>{
+    try {
+        const { userId } = req.body
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const tasks = await TaskService.getUpcomingTask(userId);
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(400).json("something went wrong");
+    }
+}
+
+
+
 //Admin
 
 
 export const getUserTask = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const tasks = await taskService.particularUser(id);
+        const tasks = await TaskService.particularUser(id);
         res.status(200).json(tasks);
     } catch (error) {
         res.status(400).json("something went wrong");
@@ -95,7 +110,7 @@ export const getUserTask = async (req: Request, res: Response) => {
 export const getAllUserTask = async (req: Request, res: Response) => {
     try {
 
-        const tasks = await taskService.getAllTasks();
+        const tasks = await TaskService.getAllTasks();
         res.status(200).json(tasks);
     } catch (error) {
         res.status(400).json("something went wrong");
@@ -107,7 +122,7 @@ export const deleteUserTask = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const task = await taskService.adminDeleteTask(id);
+        const task = await TaskService.adminDeleteTask(id);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -124,7 +139,7 @@ export const updateUserTask = async (req: Request, res: Response) => {
     const { title, description, dewDate, status } = req.body;
 
     try {
-        const task = await taskService.adminUpdateTask(id, title, description, dewDate, status);
+        const task = await TaskService.adminUpdateTask(id, title, description, dewDate, status);
         if (!task) {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -137,7 +152,7 @@ export const createTaskByAdmin = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         req.body.userId = id;
-        const task = await taskService.createTaskByAdmin(req.body);
+        const task = await TaskService.createTaskByAdmin(req.body);
         res.status(201).json(task);
     } catch (error) {
         res.status(400).json("something went wrong");

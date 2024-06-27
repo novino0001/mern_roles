@@ -24,8 +24,8 @@ export const PrivateRoutes: React.FC<Props> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token,role } = useSelector((state: IRootState) => state.userProfile);
-  console.log(token)
-  console.log(role) 
+  // console.log(token)
+  // console.log(role) 
 
   useEffect(() => {
     if (token) sessionExpire();

@@ -7,7 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import routes from '../../constants/routes';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../state_management/reducers/AuthReducers';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import styles from './style/allTaskTable.module.css';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ShowParticularUserTask: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -40,7 +44,7 @@ const ShowParticularUserTask: React.FC = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, [token, userId]); // Added token and userId to the dependency array
+  }, [token, userId]);
 
   const updateTask = (taskId: string) => {
     navigate(routes.UPDATE_TASK_BY_ADMIN.replace(':taskId', taskId));
@@ -77,6 +81,17 @@ const ShowParticularUserTask: React.FC = () => {
   if (error) {
     return <div>{error}</div>;
   }
+
+  const data = {
+    labels: ['Pending', 'Completed'],
+    datasets: [
+      {
+        data: [performance.pending, performance.completed],
+        backgroundColor: ['#FF6384', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+      },
+    ],
+  };
 
   let i = 1;
 
@@ -126,6 +141,9 @@ const ShowParticularUserTask: React.FC = () => {
             ))}
           </tbody>
         </table>
+        <div className={styles.chartContainer}>
+          <Pie data={data} />
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
