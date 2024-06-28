@@ -1,6 +1,8 @@
 import User, { IUser } from "../../models/userModel"
 import { response } from "../../interfaces/commonInterfaces";
 import bcrypt from 'bcryptjs';
+ 
+ 
 
 class UserService {
   async getUserData(id: string) {
@@ -50,18 +52,27 @@ class UserService {
       }
     }
   };
-
-  async getAllUsers() {
+ 
+  async getAllUsers(page:number , limit :number , searchByEmail:string, searchByName:string)
+ {
     try {
-      const all_users = await User.find({ role: "user" });
-      if (all_users) {
-        response.data = { all_users }
-        return response
-      }
-    }
-
-    catch (error) {
-      console.error("Error to find task:", error);
+      
+      const query = {
+        $and: [
+          { fullName: { $regex: searchByName, $options: 'i' } },
+          { email: { $regex: searchByEmail, $options: 'i' } },
+          { role: { $ne: 'admin' } },
+        ],
+      }; 
+     
+      const users = await User.find(query,)
+        .skip((page - 1) * limit)
+        .limit(limit);
+      const totalUsers = await User.countDocuments(query); 
+      return { users, totalUsers };  
+   
+    } catch (error) {
+      console.error("Error fetching users:", error);
       throw error;
     }
   }

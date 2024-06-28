@@ -34,12 +34,24 @@ export const updateUserProfile = async (req: AuthRequest, res: Response) => {
 };
 
 // Get all users (Admin only)
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = await UserService.getAllUsers();
-    res.status(200).json(users);
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
+    const searchByEmail =  req.query.searchByEmail as string
+    const searchByName = req.query.searchByName as string
+    const { users, totalUsers } = await UserService.getAllUsers(page, limit,searchByEmail,searchByName);
+    
+    res.status(200).json({
+      data: {
+        users,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / limit),
+        currentPage: page,
+      }
+    });
   } catch (error) {
-    res.status(400).json("something went wrong");
+    res.status(400).json("Something went wrong");
   }
 };
 

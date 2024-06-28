@@ -65,17 +65,24 @@ class UserService {
         });
     }
     ;
-    getAllUsers() {
+    getAllUsers(page, limit, searchByEmail, searchByName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const all_users = yield userModel_1.default.find({ role: "user" });
-                if (all_users) {
-                    commonInterfaces_1.response.data = { all_users };
-                    return commonInterfaces_1.response;
-                }
+                const query = {
+                    $and: [
+                        { fullName: { $regex: searchByName, $options: 'i' } },
+                        { email: { $regex: searchByEmail, $options: 'i' } },
+                        { role: { $ne: 'admin' } },
+                    ],
+                };
+                const users = yield userModel_1.default.find(query)
+                    .skip((page - 1) * limit)
+                    .limit(limit);
+                const totalUsers = yield userModel_1.default.countDocuments(query);
+                return { users, totalUsers };
             }
             catch (error) {
-                console.error("Error to find task:", error);
+                console.error("Error fetching users:", error);
                 throw error;
             }
         });

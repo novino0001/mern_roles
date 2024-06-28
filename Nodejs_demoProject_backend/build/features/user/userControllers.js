@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blockUser = exports.getLatestUsers = exports.getAllUsers = exports.updateUserProfile = exports.myProfile = void 0;
+exports.blockUser = exports.getLatestUsers = exports.getUsers = exports.updateUserProfile = exports.myProfile = void 0;
 const userServices_1 = __importDefault(require("./userServices"));
 //my-profile
 const myProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,16 +43,27 @@ const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.updateUserProfile = updateUserProfile;
 // Get all users (Admin only)
-const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield userServices_1.default.getAllUsers();
-        res.status(200).json(users);
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const searchByEmail = req.query.searchByEmail;
+        const searchByName = req.query.searchByName;
+        const { users, totalUsers } = yield userServices_1.default.getAllUsers(page, limit, searchByEmail, searchByName);
+        res.status(200).json({
+            data: {
+                users,
+                totalUsers,
+                totalPages: Math.ceil(totalUsers / limit),
+                currentPage: page,
+            }
+        });
     }
     catch (error) {
-        res.status(400).json("something went wrong");
+        res.status(400).json("Something went wrong");
     }
 });
-exports.getAllUsers = getAllUsers;
+exports.getUsers = getUsers;
 const getLatestUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield userServices_1.default.getLatestUsers();
