@@ -83,6 +83,28 @@ class UserService {
         throw error; 
       }
     }
+
+ async blockUser(id: string) {
+    try{
+      const update = {
+        isActive : false
+      }
+      const user = await User.findByIdAndUpdate( {userId:id} ,update , {new:true} );
+      if (user) {
+        response.message = user.fullName + " has been blocked";
+        response.success = true 
+        return response
+    }
+
+}
+catch (error) {
+    console.error("Error delete task:", error);
+    throw error;
+}
+ }
+
+
+
   }
   
   

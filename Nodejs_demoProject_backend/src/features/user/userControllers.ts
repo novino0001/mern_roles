@@ -52,3 +52,15 @@ export const getLatestUsers = async (req: Request, res: Response) => {
     res.status(400).json("something went wrong");
   }
 };
+export const blockUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const blocked_user = await UserService.blockUser(id!);
+    if (!blocked_user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(blocked_user);
+  } catch (error) {
+    res.status(400).json("something went wrong");
+  }
+};

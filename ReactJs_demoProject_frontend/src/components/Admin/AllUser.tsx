@@ -12,6 +12,7 @@ const AllUser: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState(""); // State for block query
   const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
   const [emailQuery, setEmailQuery] = useState<string>(''); // State for email query
   const navigate = useNavigate();
@@ -41,6 +42,15 @@ const AllUser: React.FC = () => {
 
     fetchData();
   }, [token]);
+
+  const blockUser = (userId: string) => {
+   const response =  axios.patch(`http://localhost:3002/api/v1/user/admin/block/${userId}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setMessage("User blocked successfully");
+  };
 
   const showUserTask = (userId: string) => {
     navigate(routes.SHOW_USER_TASK.replace(':userId', userId));
@@ -99,6 +109,9 @@ const AllUser: React.FC = () => {
                 <td>
                   <button type="button" onClick={() => showUserTask(user._id)}>
                     {user.fullName}'s activity
+                  </button>
+                  <button type="button" onClick={() => blockUser(user._id)}>
+                    Block
                   </button>
                 </td>
               </tr>
