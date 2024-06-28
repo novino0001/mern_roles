@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLatestUsers = exports.getAllUsers = exports.updateUserProfile = exports.myProfile = void 0;
+exports.blockUser = exports.getLatestUsers = exports.getAllUsers = exports.updateUserProfile = exports.myProfile = void 0;
 const userServices_1 = __importDefault(require("./userServices"));
 //my-profile
 const myProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,3 +63,17 @@ const getLatestUsers = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getLatestUsers = getLatestUsers;
+const blockUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const blocked_user = yield userServices_1.default.blockUser(id);
+        if (!blocked_user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(blocked_user);
+    }
+    catch (error) {
+        res.status(400).json("something went wrong");
+    }
+});
+exports.blockUser = blockUser;

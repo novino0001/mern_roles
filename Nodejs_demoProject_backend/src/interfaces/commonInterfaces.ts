@@ -3,7 +3,8 @@ export const response: {
     message: string;
     data?: any;
     success: boolean;
-  } = { message: "", success: false ,  };
+    isActive: boolean;
+  } = { message: "", success: false ,isActive:true};  
 
  // taskInterface.ts
  

@@ -42,6 +42,12 @@ class AuthService {
             if (!user) {
                 commonInterfaces_1.response.message = "Invalid email";
                 commonInterfaces_1.response.success = false;
+                // response.isActive=true
+                return commonInterfaces_1.response;
+            }
+            if (user.isActive === false) {
+                commonInterfaces_1.response.isActive = false;
+                commonInterfaces_1.response.success = false;
                 return commonInterfaces_1.response;
             }
             const id = user._id;
@@ -49,6 +55,7 @@ class AuthService {
             if (!isPasswordValid) {
                 commonInterfaces_1.response.message = "Invalid Password";
                 commonInterfaces_1.response.success = false;
+                commonInterfaces_1.response.isActive = true;
                 return commonInterfaces_1.response;
             }
             const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, secretKey, { expiresIn: "1h" });

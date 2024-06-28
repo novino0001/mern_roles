@@ -43,6 +43,10 @@ const Login: React.FC = () => {
           navigate(routes.HOMEPAGE);
         }
       }
+     else if(response.data.token.isActive === false && response.data.token.success === false){
+        setMessage("Your account has been deactivated");
+      }
+       
       else {
         setMessage("invalid email or password");
       }

@@ -43,7 +43,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
- 
+
 export const getLatestUsers = async (req: Request, res: Response) => {
   try {
     const users = await UserService.getLatestUsers();
@@ -55,6 +55,7 @@ export const getLatestUsers = async (req: Request, res: Response) => {
 export const blockUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
+
     const blocked_user = await UserService.blockUser(id!);
     if (!blocked_user) {
       return res.status(404).json({ error: 'User not found' });

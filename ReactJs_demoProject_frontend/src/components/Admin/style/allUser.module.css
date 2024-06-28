@@ -49,11 +49,34 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
+    
   }
   
-  .table button:hover {
-    background-color: #45a049;
+  .blockButton:hover {
+    background-color: #810505;
+  }
+  .unblockButton:hover{
+    background-color: #173f18;
+     
+  }
+  .userButton:hover{
+    background-color: #173f18;
+     
+  }
+.userButton{
+  background-color: green;
+  color: white;
+  
+}
+.blockButton {
+    background-color: red;
+    color: white;
+    margin-left: 5px;
+  }
+  
+.unblockButton {
+    background-color: green;
+    color: white;
+    margin-left: 5px;
   }
   

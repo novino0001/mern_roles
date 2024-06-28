@@ -30,6 +30,12 @@ class AuthService {
         if (!user) {
             response.message = "Invalid email";
             response.success = false;
+            // response.isActive=true
+            return response;
+        }
+        if(user.isActive === false){
+            response.isActive = false;
+            response.success = false;
             return response;
         }
         const id = user._id;
@@ -38,13 +44,10 @@ class AuthService {
         if (!isPasswordValid) {
             response.message = "Invalid Password";
             response.success = false;
+            response.isActive=true
             return response;
         }
-        if(user.isActive === false){
-            response.message = "Your account is not active";
-            response.success = false;
-            return response;
-        }
+       
 
         const token = jwt.sign({ id: user._id, role: user.role }, secretKey, { expiresIn: "1h" });
         const role = user.role

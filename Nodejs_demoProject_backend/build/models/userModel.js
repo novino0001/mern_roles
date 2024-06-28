@@ -29,5 +29,6 @@ const UserSchema = new mongoose_1.Schema({
     password: { type: String, required: true },
     fullName: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    isActive: { type: Boolean, default: true },
 });
 exports.default = mongoose_1.default.model('User', UserSchema);

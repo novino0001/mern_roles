@@ -97,5 +97,26 @@ class UserService {
             }
         });
     }
+    blockUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield userModel_1.default.findById(userId);
+                if (!user) {
+                    return null;
+                }
+                user.isActive = !user.isActive;
+                yield user.save();
+                return {
+                    message: user.fullName + (user.isActive ? " has been unblocked" : " has been blocked"),
+                    success: true,
+                    user,
+                };
+            }
+            catch (error) {
+                console.error("Error toggling block status:", error);
+                throw error;
+            }
+        });
+    }
 }
 exports.default = new UserService();

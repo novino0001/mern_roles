@@ -1,4 +1,3 @@
-// src/components/AllUser.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +11,7 @@ const AllUser: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState(""); // State for block query
+  const [message, setMessage] = useState(""); // State for block/unblock message
   const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
   const [emailQuery, setEmailQuery] = useState<string>(''); // State for email query
   const navigate = useNavigate();
@@ -43,13 +42,27 @@ const AllUser: React.FC = () => {
     fetchData();
   }, [token]);
 
-  const blockUser = (userId: string) => {
-   const response =  axios.patch(`http://localhost:3002/api/v1/user/admin/block/${userId}`,{
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setMessage("User blocked successfully");
+  const userStatus = async (userId: string, name: string, isActive: boolean) => {
+    try {
+      const action = isActive ? 'block' : 'unblock';
+      const userConfirmed = window.confirm(`Are you sure you want to ${action} ${name}?`);
+      if (userConfirmed) {
+        const response = await axios.patch(
+          `http://localhost:3002/api/v1/user/admin/block/${userId}`, {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setMessage(`User ${action}ed successfully`);
+        setUsers(users.map(user => user._id === userId ? { ...user, isActive: !isActive } : user));
+      } else {
+        setMessage(`User not ${action}ed`);
+      }
+    } catch (err) {
+      setError(`Failed to ${isActive ? 'block' : 'unblock'} user`);
+    }
   };
 
   const showUserTask = (userId: string) => {
@@ -107,12 +120,27 @@ const AllUser: React.FC = () => {
                 <td>{user.email}</td>
                 <td>{user.role}</td>
                 <td>
-                  <button type="button" onClick={() => showUserTask(user._id)}>
+                  <button type="button" onClick={() => showUserTask(user._id)}
+                    className={styles.userButton}>
                     {user.fullName}'s activity
                   </button>
-                  <button type="button" onClick={() => blockUser(user._id)}>
-                    Block
-                  </button>
+                  {user.isActive ? (
+                    <button
+                      type="button"
+                      onClick={() => userStatus(user._id, user.fullName, true)}
+                      className={styles.blockButton}
+                    >
+                      Block
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => userStatus(user._id, user.fullName, false)}
+                      className={styles.unblockButton}
+                    >
+                      Unblock
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -130,13 +130,15 @@ class TaskService {
     getUpcomingTask(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const now = new Date();
+            const today = new Date();
+            today.setDate(now.getDate() - 1);
             const oneWeekLater = new Date();
             oneWeekLater.setDate(now.getDate() + 7);
             try {
                 const upcomingTasks = yield taskModel_1.default.find({
                     userId: id,
                     dueDate: {
-                        $gte: now,
+                        $gte: today,
                         $lte: oneWeekLater
                     },
                     status: "pending"
@@ -234,6 +236,7 @@ class TaskService {
                 }, { pending: 0, completed: 0 });
                 if (results) {
                     commonInterfaces_1.response.data = { results, getscore };
+                    commonInterfaces_1.response.success = true;
                     return commonInterfaces_1.response;
                 }
             }

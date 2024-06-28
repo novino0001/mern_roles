@@ -121,13 +121,15 @@ async getTasks(user_id: string){
 async getUpcomingTask(id : string){
     
         const now = new Date();
+        const today = new Date()
+        today.setDate(now.getDate()-1)
         const oneWeekLater = new Date();
         oneWeekLater.setDate(now.getDate() + 7);
         try{
             const upcomingTasks = await Task.find({
                  userId : id,
                 dueDate: {
-                  $gte: now,
+                  $gte: today,
                   $lte: oneWeekLater
                 },
                 status: "pending"
@@ -230,6 +232,7 @@ async getUpcomingTask(id : string){
         
         if (results) {
             response.data = { results,getscore }
+            response.success = true
             return response
         }
 

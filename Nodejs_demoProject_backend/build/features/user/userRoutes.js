@@ -13,4 +13,5 @@ userRoutes.patch('/update-profile', authMiddleware_1.authMiddleware, userControl
 // Admin routes
 userRoutes.get('/admin/users', authMiddleware_1.authMiddleware, (0, roleMiddleware_1.roleMiddleware)('admin'), userControllers_1.getAllUsers);
 userRoutes.get("/admin/latest-users", authMiddleware_1.authMiddleware, (0, roleMiddleware_1.roleMiddleware)("admin"), userControllers_1.getLatestUsers);
+userRoutes.patch("/admin/block/:id", authMiddleware_1.authMiddleware, (0, roleMiddleware_1.roleMiddleware)("admin"), userControllers_1.blockUser);
 exports.default = userRoutes;
